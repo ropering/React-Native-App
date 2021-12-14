@@ -1,10 +1,18 @@
 /*
-    비밀번호 별표 표시
+    비밀번호 별표 표시ㅇ
     회원가입 페이지에서 이메일 확인 여러번 반복
     비밀번호 확인 textinput 추가
     로그인, 비밀번호 찾기 추가
     메인 페이지(게시글)
+    비밀번호 찾기 -> 메인 페이지
 
+    alert말고 input 밑에 빨간 글로 표시
+    export 개념이 먼지
+    코드 분리를 어떻게 해야하는지
+    깃 공부
+
+firebase 연동
+Tab Navigator
 비밀번호 찾기 완료하면 결국 어떻게 되는가?
 로그인 상태 저장
 페이지 나눔
@@ -12,7 +20,9 @@
     firebase.auth().onAuthStateChanged(user => {
         this.props.navigation.navigate(user ? 'Main' : 'SignUp')
         })
-*/
+audrbs1028@naver.com
+        */
+
 
 import React, {useState} from 'react';
 import auth from '@react-native-firebase/auth';
@@ -27,16 +37,7 @@ import {
 } from 'react-native';
 import { createNavigationContainer, NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-// 메인 페이지 (게시글 목록)
-function MainPage() {
-    return (
-        <View>
-            <Text>
-                Hi
-            </Text>
-        </View>
-    )
-}
+
 // 로그인 페이지
 function SignInPage({navigation}) {
     const [email, setEmail] = useState('');
@@ -66,11 +67,15 @@ function SignInPage({navigation}) {
             <View style={styles.buttons}>
                 <Button title="비밀번호 찾기" onPress={() => navigation.navigate("FindPasswordPage")} />
             </View>
+            <View style={styles.buttons}>
+                <Button title="마이 페이지" onPress={() => navigation.navigate("MyPage")} />
+            </View>
         
         </View>
     )
 }
 // 로그인 로직 함수
+// 에러 처리 추가해야함
 function SignIn(email, password, {navigation}) {
     try {
         auth().signInWithEmailAndPassword(email, password)
@@ -126,7 +131,7 @@ const verifyEmail = (email, password, rePassword, {navigation}) => {
     if (regExp.test(email) == true) {
         let searchValue = '@student.anu.ac.kr'
         let isValid = email.indexOf(searchValue);
-        if (isValid != -1) { // 다시 바꾸기
+        if (isValid == -1) { 
             alert("안동대학교 이메일 주소를 입력해주세요")
         } else {
             try {
@@ -197,8 +202,27 @@ const emailCheck = (email) => {
                 }
             });
     }
-  
 }
+// 메인 페이지 (게시글 목록)
+function MainPage() {
+    return (
+        <View>
+            <Text>
+                Hi
+            </Text>
+        </View>
+    )
+}
+function MyPage() {
+    return (
+        <View>
+            <Text style={styles.text}>
+                마이 페이지 입니다
+            </Text>
+        </View>
+    )
+}
+
 // 페이지 이동 위한 StackNavigator 변수 선언 및 초기화
 const Stack = createStackNavigator();
 
@@ -222,6 +246,10 @@ class App extends React.Component{
                     <Stack.Screen
                         name="MainPage"
                         component={MainPage}
+                    />
+                    <Stack.Screen
+                        name="MyPage"
+                        component={MyPage}
                     />
 
                 </Stack.Navigator>
