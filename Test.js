@@ -11,6 +11,11 @@
     코드 분리를 어떻게 해야하는지
     깃 공부
 
+
+거래 요청자가 일 때문에 온라인으로 거래하는 것 고려 
+    -> 채팅 어떨까(글, 이미지, 영상)
+    -> 신용도 시스템 도입 고려
+    -> 의뢰인-심부름꾼 간의 먹튀 가능성
 firebase 연동
 Tab Navigator
 비밀번호 찾기 완료하면 결국 어떻게 되는가?
@@ -34,9 +39,14 @@ import {
     TextInput,
     Button,
     TouchableOpacity,
+    Image,
 } from 'react-native';
 import { createNavigationContainer, NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import { Menu, Divider, Provider } from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import ProfileImage from './profile.png';
 
 // 로그인 페이지
 function SignInPage({navigation}) {
@@ -44,6 +54,7 @@ function SignInPage({navigation}) {
     const [password, setPassword] = useState('');
     return (
         <View style={styles.screen}>
+
             <Text style={styles.title}>로그인 회원가입</Text>
             <TextInput
                 style={styles.input}
@@ -75,7 +86,7 @@ function SignInPage({navigation}) {
     )
 }
 // 로그인 로직 함수
-// 에러 처리 추가해야함
+// 에러 처리 추가해야함 Given String is empty or null
 function SignIn(email, password, {navigation}) {
     try {
         auth().signInWithEmailAndPassword(email, password)
@@ -226,30 +237,106 @@ function MyPage() {
 // 페이지 이동 위한 StackNavigator 변수 선언 및 초기화
 const Stack = createStackNavigator();
 
+const CustomMenu = () => {
+    const [showMenu, setShowMenu] = React.useState(false);
+  
+    return (
+      <View style={{}}>
+        <Menu
+          visible={showMenu}
+          onDismiss={() => setShowMenu(false)}
+          anchor={
+              <Button 
+                onPress={() =>  alert('hi')}
+                title='이동'/>
+          }>
+          <Menu.Item onPress={() => {}} title="Item 1" />
+          <Menu.Item onPress={() => {}} title="Item 2" />
+          <Divider />
+          <Menu.Item onPress={() => {}} title="Item 3" />
+        </Menu>
+      </View>
+    );
+  };
+const menu = () => {
+    return (
+      <View>
+          <Text>Hi</Text>
+      </View>)
+}
+
+
 class App extends React.Component{
+    
     render() {
         return (
             <NavigationContainer>
-                <Stack.Navigator>
+                {/* screenOptions = {{ headerShown: false }} */}
+                <Stack.Navigator >
                     <Stack.Screen
                         name="SignInPage"
                         component={SignInPage}
+                        options={{
+                            headerRight: () => { 
+                                return (
+                                    <Button
+                                        onPress={() => {
+                                            return alert('게시글이 등록 되었습니다.');
+                                        }}
+                                        title="글등록"
+                                    />
+                                )
+                            },
+                        }}
                     />
                     <Stack.Screen
                         name="RegisterPage"
                         component={RegisterPage}
+                        options={{
+                            headerBackImage: () => (
+                              <AntDesign name="close" size={30} style={{ color: 'white' }} />
+                            ),
+                            headerTitle: () => (
+                              <View>
+                                <Text
+                                  style={{
+                                    flex: 1,
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    alignSelf: 'center',
+                                    color: 'white',
+                                  }}>
+                                  Register
+                                </Text>
+                              </View>
+                            ),
+                            headerRight: () => <CustomMenu />,
+                            headerStyle: {
+                              backgroundColor: '#2e46ff',
+                            },
+                          }}
                     />
                     <Stack.Screen
                         name="FindPasswordPage"
                         component={FindPasswordPage}
+                        options={{
+                            headerRight: () => {                            
+                            },
+                        }}
+                        
                     />
                     <Stack.Screen
                         name="MainPage"
                         component={MainPage}
+                        
                     />
                     <Stack.Screen
                         name="MyPage"
                         component={MyPage}
+                        options={{
+                            headerRight: () => {
+                            },
+                        }}
                     />
 
                 </Stack.Navigator>
@@ -300,4 +387,32 @@ const styles = StyleSheet.create({
         fontFamily: 'BMDoHyeon',
         
       },
+      container: {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+      },
 })
+
+/*
+나경 
+    회원가입 
+    회원가입 유효성 검사
+    비밀번호는 db에 접근하는 식으로
+    auth() : 비밀번호 어떤 규칙으로 저장되는지 먼저  확인
+
+명균 : 마이 페이지
+
+게시글 알림 허용 : 토글 스위치
+회원정보 수정
+
+알림 키워드 필터링
+카테고리별 알림 (과제, 물건배달, 음식배달, 기타)
+위치기반 게시글 작성
+
+아이디 만드는 것에 대해 
+휴대폰 인증
+
+
+서비스 제공에 대한 아이디어 설문조사
+*/
